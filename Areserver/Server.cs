@@ -4,7 +4,7 @@ using Lidgren.Network;
 using System.Threading;
 using System.Linq;
 
-namespace jjgame 
+namespace Areserver 
 {
 	class Server //TODO string.format where needed
 	{

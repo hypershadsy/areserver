@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{48B32475-E583-470D-B0B0-1025C51943D1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>jjgame</RootNamespace>
-    <AssemblyName>jjgame</AssemblyName>
+    <RootNamespace>Areserver</RootNamespace>
+    <AssemblyName>Areserver</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
