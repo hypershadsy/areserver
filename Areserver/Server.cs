@@ -204,7 +204,7 @@ namespace Areserver
 				outMsg.Write (newY);
 
 				server.SendToAll (outMsg, msg.SenderConnection, NetDeliveryMethod.Unreliable, 0);
-			} else if (type == "LIFE") {
+			} else if (type == "LIFE") { //TODO: NOT BOOL!!
 				bool status = msg.ReadBoolean();
 				Out (string.Format("LIFE: {0}: {1}", msg.SenderConnection.RemoteUniqueIdentifier, status));
 
@@ -244,6 +244,22 @@ namespace Areserver
 
 					server.SendToAll (outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
 				}
+			} else if (type == "BUILD") {
+				int buildX = msg.ReadInt32 ();
+				int buildY = msg.ReadInt32 ();
+				int buildType = msg.ReadInt32 ();
+				Out (string.Format ("BUILD: {0}: at ({1},{2}) {3}", msg.SenderConnection.RemoteUniqueIdentifier, buildX, buildY, buildType));
+
+				//TODO: save block in array
+
+				//TODO: send the build to all other clients
+				NetOutgoingMessage outMsg = server.CreateMessage ();
+				outMsg.Write ("BUILD");
+				outMsg.Write (msg.SenderConnection.RemoteUniqueIdentifier);
+				outMsg.Write (buildX);
+				outMsg.Write (buildY);
+				outMsg.Write (buildType);
+				server.SendToAll (outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
 			}
 		}
 
