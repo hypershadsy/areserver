@@ -302,15 +302,15 @@ namespace Areserver
                 }
                 else
                 {
-                    Out(string.Format("CHAT: {0}: {1}", msg.SenderConnection.RemoteUniqueIdentifier, message));
+                    Out(string.Format("CHAT: {0}: {1}", senderUid, message));
 
-                    //send the chat to all other clients
+                    //send the chat to ALL clients
                     NetOutgoingMessage outMsg = server.CreateMessage();
                     outMsg.Write("CHAT");
-                    outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
+                    outMsg.Write(senderUid);
                     outMsg.Write(message);
 
-                    server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
+                    server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
                 }
             }
             else if (type == "BUILD")
@@ -320,28 +320,36 @@ namespace Areserver
                 int buildType = msg.ReadInt32();
                 Out(string.Format("BUILD: {0}: at ({1},{2}) {3}", senderUid, buildX, buildY, buildType));
 
-                //TODO: save block in array
-                dMap[buildX, buildY] = Tile.ConstructFromID(buildType);
+                //save block in array
+                var newTile = Tile.ConstructFromID(buildType);
+                if (newTile == null)
+                {
+                    Out("BAD TILE ID");
+                    return;
+                }
+                dMap[buildX, buildY] = newTile;
 
-                //send the build to all other clients
+                //send the build to ALL clients
                 NetOutgoingMessage outMsg = server.CreateMessage();
                 outMsg.Write("BUILD");
                 outMsg.Write(senderUid);
                 outMsg.Write(buildX);
                 outMsg.Write(buildY);
                 outMsg.Write(buildType);
-                server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
+                server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
             }
             else if (type == "FIRE")
             {
-                int fireX = msg.ReadInt32();
-                int fireY = msg.ReadInt32();
+                float fireX = msg.ReadFloat();
+                float fireY = msg.ReadFloat();
                 float fireAngle = msg.ReadFloat();
                 float fireSpeed = msg.ReadFloat();
+                Out(string.Format("FIRE: {0}: at ({1},{2}) ang={3} speed={4}",
+                                  senderUid, fireX, fireY, fireAngle, fireSpeed));
 
                 //TODO: save?
 
-                //send the fire to all other clients
+                //send the fire to ALL clients
                 NetOutgoingMessage outMsg = server.CreateMessage();
                 outMsg.Write("FIRE");
                 outMsg.Write(senderUid);
@@ -349,7 +357,7 @@ namespace Areserver
                 outMsg.Write(fireY);
                 outMsg.Write(fireAngle);
                 outMsg.Write(fireSpeed);
-                server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
+                server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
             }
         }
 

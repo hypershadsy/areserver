@@ -10,12 +10,13 @@ namespace Areserver
         /// </summary>
         public long OwnerUID { get; set; }
 
-        public long TileID
+        public int TileID
         {
             get
             {
                 Attribute attr = Attribute.GetCustomAttribute(this.GetType(), typeof(TileMetaAttribute));
-                return (long)attr.TypeId;
+                int id = ((TileMetaAttribute)attr).Id;
+                return id;
             }
         }
 
@@ -46,7 +47,7 @@ namespace Areserver
                     }
                 }
             }
-            throw new Exception("Type with ID not found. ID = " + id);
+            return null;
         }
     }
 
