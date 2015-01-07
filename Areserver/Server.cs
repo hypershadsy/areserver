@@ -251,6 +251,7 @@ namespace Areserver
         private static void HandleGameMessage(NetIncomingMessage msg)
         {
             string type = msg.ReadString();
+            long senderUid = msg.SenderConnection.RemoteUniqueIdentifier;
 
             if (type == "POS")
             {
@@ -259,7 +260,7 @@ namespace Areserver
 
                 NetOutgoingMessage outMsg = server.CreateMessage();
                 outMsg.Write("POS");
-                outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
+                outMsg.Write(senderUid);
                 outMsg.Write(newX);
                 outMsg.Write(newY);
 
@@ -268,15 +269,15 @@ namespace Areserver
             else if (type == "LIFE")
             { //TODO: NOT BOOL!!
                 bool status = msg.ReadBoolean();
-                Out(string.Format("LIFE: {0}: {1}", msg.SenderConnection.RemoteUniqueIdentifier, status));
+                Out(string.Format("LIFE: {0}: {1}", senderUid, status));
 
                 //save value
-                dLife[msg.SenderConnection.RemoteUniqueIdentifier] = status;
+                dLife[senderUid] = status;
 
                 //inform everyone else about his pining for the fjords
                 NetOutgoingMessage outMsgLife = server.CreateMessage();
                 outMsgLife.Write("LIFE");
-                outMsgLife.Write(msg.SenderConnection.RemoteUniqueIdentifier);
+                outMsgLife.Write(senderUid);
                 outMsgLife.Write(status);
                 server.SendToAll(outMsgLife, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
             }
@@ -290,12 +291,12 @@ namespace Areserver
                     Out(string.Format("NAME: {0}", newName));
 
                     //save name in dict
-                    dNames[msg.SenderConnection.RemoteUniqueIdentifier] = newName;
+                    dNames[senderUid] = newName;
 
                     //inform everyone else about his name changes
                     NetOutgoingMessage outMsg = server.CreateMessage();
                     outMsg.Write("NAME");
-                    outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
+                    outMsg.Write(senderUid);
                     outMsg.Write(newName);
                     server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
                 }
@@ -317,18 +318,37 @@ namespace Areserver
                 int buildX = msg.ReadInt32();
                 int buildY = msg.ReadInt32();
                 int buildType = msg.ReadInt32();
-                Out(string.Format("BUILD: {0}: at ({1},{2}) {3}", msg.SenderConnection.RemoteUniqueIdentifier, buildX, buildY, buildType));
+                Out(string.Format("BUILD: {0}: at ({1},{2}) {3}", senderUid, buildX, buildY, buildType));
 
                 //TODO: save block in array
                 dMap[buildX, buildY] = Tile.ConstructFromID(buildType);
 
-                //TODO: send the build to all other clients
+                //send the build to all other clients
                 NetOutgoingMessage outMsg = server.CreateMessage();
                 outMsg.Write("BUILD");
-                outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
+                outMsg.Write(senderUid);
                 outMsg.Write(buildX);
                 outMsg.Write(buildY);
                 outMsg.Write(buildType);
+                server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
+            }
+            else if (type == "FIRE")
+            {
+                int fireX = msg.ReadInt32();
+                int fireY = msg.ReadInt32();
+                float fireAngle = msg.ReadFloat();
+                float fireSpeed = msg.ReadFloat();
+
+                //TODO: save?
+
+                //send the fire to all other clients
+                NetOutgoingMessage outMsg = server.CreateMessage();
+                outMsg.Write("FIRE");
+                outMsg.Write(senderUid);
+                outMsg.Write(fireX);
+                outMsg.Write(fireY);
+                outMsg.Write(fireAngle);
+                outMsg.Write(fireSpeed);
                 server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
             }
         }
