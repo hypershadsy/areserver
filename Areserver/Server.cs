@@ -187,6 +187,9 @@ namespace Areserver
                 case "FIRE":
                     HandleFIRE(msg);
                     break;
+                case "NAME":
+                    HandleNAME(msg);
+                    break;
             }
         }
 
@@ -245,31 +248,14 @@ namespace Areserver
         static void HandleCHAT(NetIncomingMessage msg)
         {
             string message = msg.ReadString();
-            if (message.StartsWith("/setname "))
-            {
-                string newName = message.Substring("/setname ".Length);
-                Out(string.Format("NAME: {0}", newName));
+            Out(string.Format("CHAT: {0}: {1}", msg.SenderConnection.RemoteUniqueIdentifier, message));
 
-                //save name in dict
-                GetPlayerFromUID(msg.SenderConnection.RemoteUniqueIdentifier).Name = newName;
-
-                //inform everyone else about his name changes
-                NetOutgoingMessage outMsg = server.CreateMessage();
-                outMsg.Write("NAME");
-                outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
-                outMsg.Write(newName);
-                server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
-            }
-            else
-            {
-                Out(string.Format("CHAT: {0}: {1}", msg.SenderConnection.RemoteUniqueIdentifier, message));
-                //send the chat to ALL clients
-                NetOutgoingMessage outMsg = server.CreateMessage();
-                outMsg.Write("CHAT");
-                outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
-                outMsg.Write(message);
-                server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
-            }
+            //send the chat to ALL clients
+            NetOutgoingMessage outMsg = server.CreateMessage();
+            outMsg.Write("CHAT");
+            outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
+            outMsg.Write(message);
+            server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
         }
 
         static void HandleBUILD(NetIncomingMessage msg)
@@ -315,7 +301,25 @@ namespace Areserver
             outMsg.Write(fireSpeed);
             server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
         }
+
+        static void HandleNAME(NetIncomingMessage msg)
+        {
+            string newName = msg.ReadString();
+            string oldName = GetPlayerFromUID(msg.SenderConnection.RemoteUniqueIdentifier).Name;
+            Out(string.Format("NAME: {0} changed {1}", oldName, newName));
+
+            //save name in dict
+            GetPlayerFromUID(msg.SenderConnection.RemoteUniqueIdentifier).Name = newName;
+
+            //inform everyone else about his name changes
+            NetOutgoingMessage outMsg = server.CreateMessage();
+            outMsg.Write("NAME");
+            outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
+            outMsg.Write(newName);
+            server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
+        }
         #endregion
+
         #region Console Commands
         private static void SetupReadLine()
         {
