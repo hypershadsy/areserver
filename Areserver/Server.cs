@@ -311,12 +311,12 @@ namespace Areserver
             //save name in dict
             GetPlayerFromUID(msg.SenderConnection.RemoteUniqueIdentifier).Name = newName;
 
-            //inform everyone else about his name changes
+            //inform ALL clients about his name change
             NetOutgoingMessage outMsg = server.CreateMessage();
             outMsg.Write("NAME");
             outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
             outMsg.Write(newName);
-            server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
+            server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
         }
         #endregion
 
@@ -393,6 +393,31 @@ namespace Areserver
                 sayMsg.Write((long)0);
                 sayMsg.Write(message);
                 server.SendToAll(sayMsg, NetDeliveryMethod.ReliableOrdered);
+            }
+            else if (thisCmd == "clearmap")
+            {
+                //for every tile
+                for (int y = 0; y < MapHeight; y++)
+                {
+                    for (int x = 0; x < MapWidth; x++)
+                    {
+                        //if it's not grass tile
+                        if (dMap[x, y].GetType() != typeof(GrassTile))
+                        {
+                            //set for myself
+                            dMap[x, y] = Tile.ConstructFromID(0);
+
+                            //send message
+                            NetOutgoingMessage buildMsg = server.CreateMessage();
+                            buildMsg.Write("BUILD");
+                            buildMsg.Write((long)0);
+                            buildMsg.Write(x);
+                            buildMsg.Write(y);
+                            buildMsg.Write(0);
+                            server.SendToAll(buildMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
+                        }
+                    }
+                }
             }
             else
             {
