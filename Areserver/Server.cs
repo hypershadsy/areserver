@@ -8,11 +8,11 @@ namespace Areserver
 {
     public class Server
     {
-        const int MapWidth = 20;
-        const int MapHeight = 20;
         private static string commandBuffer = string.Empty;
         private static NetServer server;
 
+        const int MapWidth = 20;
+        const int MapHeight = 20;
         private static List<Actor> dActors;
         private static Tile[,] dMap;
 
@@ -326,30 +326,29 @@ namespace Areserver
             Thread t = new Thread(() => {
                 while (true)
                 {
-                    ConsoleKeyInfo inp = Console.ReadKey(true);
-                    //corner cases: \n, \t, \b, \0
-                    switch (inp.KeyChar)
+                    var inpC = (char)Console.Read();
+
+                    //corner cases: \n, \r, \t, \0, \b
+                    switch (inpC)
                     {
-                        case '\n': //command done, do it (linux)
-                        case '\r': //(windows)
+                        case '\n': //command done, do it (enter key linux)
+                        case '\r': //(enter key windows)
                             string cmd = commandBuffer;
                             commandBuffer = string.Empty;
-                            Console.Write('\n');
                             HandleCommand(cmd);
                             break;
                         case '\t': //do nothing TODO: tab completion
                             break;
-                        case '\0': //do nothing, because not a real key
-                            break;
-                        case '\b': //erase a char
+                        case '\0': //erase a char (backspace monodevelop, gnome-terminal)
+                        case '\b': //(no known platforms use this)
+                            //cygwin sshd, mintty, win32 all line-buffer, so BS is not ever encountered
                             if (commandBuffer == string.Empty) //ignore when line already cleared
                                 break;
                             commandBuffer = commandBuffer.Substring(0, commandBuffer.Length - 1);
                             RedrawCommandBuffer();
                             break;
                         default:   //add it, because regular char
-                            commandBuffer += inp.KeyChar;
-                            Console.Write(inp.KeyChar);
+                            commandBuffer += inpC;
                             break;
                     }
                 }
@@ -360,7 +359,7 @@ namespace Areserver
         private static void RedrawCommandBuffer()
         {
             //redraw the command buffer
-            var seventyNineSpaces = string.Concat(Enumerable.Repeat(" ", 79));
+            var seventyNineSpaces = string.Concat(Enumerable.Repeat(" ", Console.BufferWidth - 1));
             Console.Write("\r");
             Console.Write(seventyNineSpaces);
             Console.Write("\r");
@@ -418,6 +417,10 @@ namespace Areserver
                         }
                     }
                 }
+            }
+            else if (thisCmd == "exit")
+            {
+                Environment.Exit(0);
             }
             else
             {
