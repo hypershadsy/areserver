@@ -211,8 +211,8 @@ namespace Areserver
         #region HandleX
         static void HandlePOS(NetIncomingMessage msg)
         {
-            float newX = msg.ReadFloat();
-            float newY = msg.ReadFloat();
+            int newX = msg.ReadInt32();
+            int newY = msg.ReadInt32();
 
             //save position
             Player plr = GetPlayerFromUID(msg.SenderConnection.RemoteUniqueIdentifier);
