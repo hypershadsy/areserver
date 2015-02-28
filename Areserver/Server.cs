@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using Lidgren.Network;
 using System.Threading;
 using System.Linq;
+using System.Reflection;
 
 namespace Areserver
 {
     public class Server
     {
-        private static string commandBuffer = string.Empty;
-        private static NetServer server;
+        public static string commandBuffer = string.Empty;
+        public static NetServer server;
 
-        const int MapWidth = 20;
-        const int MapHeight = 20;
-        private static List<Actor> dActors;
-        private static Tile[,] dMap;
+        public const int MapWidth = 20;
+        public const int MapHeight = 20;
+        public static List<Actor> dActors;
+        public static Tile[,] dMap;
 
         public static void Main(string[] args)
         {
@@ -193,7 +194,7 @@ namespace Areserver
             }
         }
 
-        private static Player GetPlayerFromUID(long uid)
+        public static Player GetPlayerFromUID(long uid)
         {
             foreach (var actor in dActors)
             {
@@ -368,67 +369,42 @@ namespace Areserver
 
         private static void HandleCommand(string thisCmd)
         {
-            if (thisCmd == "test")
-            {
-                Out("Your garbage is\nworking perfectly.");
-            }
-            else if (thisCmd == "list")
-            {
-                Out(string.Format("Players: {0}", server.Connections.Count));
-                foreach (var ply in server.Connections)
-                {
-                    long hisUID = ply.RemoteUniqueIdentifier;
-                    string hisName = GetPlayerFromUID(hisUID).Name;
-                    Out(string.Format("Player {0} {1}", hisUID, hisName));
-                }
-            }
-            else if (thisCmd.StartsWith("say "))
-            {
-                string message = thisCmd.Substring("say ".Length);
-                Out(string.Format("Console: {0}", message));
+            string cmdName;
+            string[] cmdArgs;
+            string[] cmdArgsAll = thisCmd.Split(' ');
+            cmdArgs = new string[cmdArgsAll.Length - 1];
+            Array.Copy(cmdArgsAll, 1, cmdArgs, 0, cmdArgs.Length);
+            cmdName = cmdArgsAll[0];
 
-                NetOutgoingMessage sayMsg = server.CreateMessage();
-                sayMsg.Write("CHAT");
-                sayMsg.Write((long)0);
-                sayMsg.Write(message);
-                server.SendToAll(sayMsg, NetDeliveryMethod.ReliableOrdered);
-            }
-            else if (thisCmd == "clearmap")
-            {
-                //for every tile
-                for (int y = 0; y < MapHeight; y++)
-                {
-                    for (int x = 0; x < MapWidth; x++)
-                    {
-                        //if it's not grass tile
-                        if (dMap[x, y].GetType() != typeof(GrassTile))
-                        {
-                            //set for myself
-                            dMap[x, y] = Tile.ConstructFromID(0);
-
-                            //send message
-                            NetOutgoingMessage buildMsg = server.CreateMessage();
-                            buildMsg.Write("BUILD");
-                            buildMsg.Write((long)0);
-                            buildMsg.Write(x);
-                            buildMsg.Write(y);
-                            buildMsg.Write(0);
-                            server.SendToAll(buildMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
-                        }
-                    }
-                }
-            }
-            else if (thisCmd == "exit")
-            {
-                Environment.Exit(0);
-            }
-            else
+            if (!ExecCommand(cmdName, cmdArgs))
             {
                 Out("unrecognized cmd");
             }
         }
 
-        private static void Out(string what)
+        private static bool ExecCommand(string cmdName, string[] cmdArgs)
+        {
+            MethodInfo[] props = typeof(Command).GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Public);
+            bool found = false;
+            foreach (MethodInfo prop in props)
+            {
+                foreach (object attr in prop.GetCustomAttributes(true))
+                {
+                    CommandAttribute cmdAttr = attr as CommandAttribute;
+                    if (cmdAttr != null && cmdAttr.Name == cmdName)
+                    {
+                        found = true;
+                        prop.Invoke(null, new object[] {
+                            cmdArgs
+                        });
+                    }
+                }
+            }
+
+            return found;
+        }
+
+        public static void Out(string what)
         {
             Console.WriteLine("\r{0}", what);
             Console.Write(commandBuffer);

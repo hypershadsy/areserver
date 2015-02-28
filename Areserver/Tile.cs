@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Areserver
 {
-    class Tile
+    public class Tile
     {
         /// <summary>
         /// This tile's owner's ID. Zero if server.

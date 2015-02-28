@@ -12,5 +12,18 @@ namespace Areserver
             this.Id = Id;
         }
     }
+
+    [System.AttributeUsage(System.AttributeTargets.Method)]
+    public class CommandAttribute : System.Attribute
+    {
+        public string Name { get; private set; }
+        public string Help { get; private set; }
+
+        public CommandAttribute(string name, string help)
+        {
+            this.Name = name;
+            this.Help = help;
+        }
+    }
 }
 

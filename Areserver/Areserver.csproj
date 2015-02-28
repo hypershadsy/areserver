@@ -43,6 +43,7 @@
     <Compile Include="Tile.cs" />
     <Compile Include="TileMetaAttribute.cs" />
     <Compile Include="Actor.cs" />
+    <Compile Include="Command.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
