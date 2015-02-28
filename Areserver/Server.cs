@@ -199,14 +199,14 @@ namespace Areserver
             foreach (var actor in dActors)
             {
                 if (actor.GetType() != typeof(Player))
-                    throw new Exception("(Actors & ~Players) are dumb");
+                    throw new Exception("FIXME found an actor that's not a player");
                 Player plr = (Player)actor;
                 if (plr.UID == uid)
                 {
                     return plr;
                 }
             }
-            throw new Exception("not found");
+            return null;
         }
 
         #region HandleX
