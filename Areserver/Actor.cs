@@ -33,6 +33,11 @@ namespace Areserver
             UID = -1;
             this.Connection = connection;
         }
+
+        public void KickFromServer(string reason)
+        {
+            Connection.Disconnect(reason);
+        }
     }
 }
 

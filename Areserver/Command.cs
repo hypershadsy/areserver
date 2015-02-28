@@ -68,6 +68,23 @@ namespace Areserver
         {
             Environment.Exit(0);
         }
+
+        [CommandAttribute("kick", "Get some idiot off your server")]
+        public static void Kick(string[] args)
+        {
+            long uid = long.Parse(args[0]);
+            Player plr = Server.GetPlayerFromUID(uid);
+
+            if (plr != null)
+            {
+                plr.KickFromServer("Kicked");
+                Server.Out("Kicked");
+            }
+            else
+            {
+                Server.Out("Could not find player with UID");
+            }
+        }
     }
 }
 
