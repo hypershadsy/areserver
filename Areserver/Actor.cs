@@ -1,4 +1,5 @@
 using System;
+using Lidgren.Network;
 
 namespace Areserver
 {
@@ -24,11 +25,13 @@ namespace Areserver
     public class Player : Actor
     {
         public long UID { get; set; }
+        public NetConnection Connection { get; set; }
 
-        public Player()
+        public Player(NetConnection connection)
             : base()
         {
             UID = -1;
+            this.Connection = connection;
         }
     }
 }

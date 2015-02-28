@@ -107,7 +107,7 @@ namespace Areserver
             InformNewbieState(msg);
 
             //intial data finished sending; add him to the player list, tag his Player for easy access
-            Player thisPlayer = new Player();
+            Player thisPlayer = new Player(msg.SenderConnection);
             thisPlayer.UID = msg.SenderConnection.RemoteUniqueIdentifier;
             dActors.Add(thisPlayer);
             msg.SenderConnection.Tag = thisPlayer;
