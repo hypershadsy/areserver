@@ -1,5 +1,6 @@
 using System;
 using Lidgren.Network;
+using System.Reflection;
 
 namespace Areserver
 {
@@ -83,6 +84,49 @@ namespace Areserver
             else
             {
                 Server.Out("Could not find player with UID");
+            }
+        }
+
+        [CommandAttribute("help", "List all commands")]
+        public static void Help(string[] args)
+        {
+            MethodInfo[] props = typeof(Command).GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Public);
+
+            if (args.Length == 1) //details mode
+            {
+                //try to find command with this name, print its help
+                bool found = false;
+                foreach (MethodInfo prop in props)
+                {
+                    foreach (object attr in prop.GetCustomAttributes(true))
+                    {
+                        CommandAttribute cmdAttr = attr as CommandAttribute;
+                        if (cmdAttr != null && cmdAttr.Name == args[0])
+                        {
+                            found = true;
+                            Server.Out(string.Format("{0} - {1}", cmdAttr.Name, cmdAttr.Help));
+                        }
+                    }
+                }
+                if (!found)
+                {
+                    Server.Out(string.Format("Command {0} not found.", args[0]));
+                }
+            }
+            else //list mode
+            {
+                //print each command along with its help
+                foreach (MethodInfo prop in props)
+                {
+                    foreach (object attr in prop.GetCustomAttributes(true))
+                    {
+                        CommandAttribute cmdAttr = attr as CommandAttribute;
+                        if (cmdAttr != null)
+                        {
+                            Server.Out(string.Format("{0} - {1}", cmdAttr.Name, cmdAttr.Help));
+                        }
+                    }
+                }
             }
         }
     }
