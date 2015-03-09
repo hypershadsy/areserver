@@ -52,7 +52,7 @@ namespace Areserver
     }
 
     [TileMetaAttribute(Id: 0)]
-    class FloorTile : Tile
+    class WoodTile : Tile
     {
     }
 }

@@ -39,7 +39,7 @@ namespace Areserver
             {
                 for (int x = 0; x < MapWidth; x++)
                 {
-                    dMap[x, y] = new FloorTile();
+                    dMap[x, y] = new WoodTile();
                 }
             }
         }

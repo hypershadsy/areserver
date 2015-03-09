@@ -45,7 +45,7 @@ namespace Areserver
                 for (int x = 0; x < Server.MapWidth; x++)
                 {
                     //if it's not grass tile
-                    if (Server.dMap[x, y].GetType() != typeof(FloorTile))
+                    if (Server.dMap[x, y].GetType() != typeof(WoodTile))
                     {
                         //set for myself
                         Server.dMap[x, y] = Tile.ConstructFromID(0);
