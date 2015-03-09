@@ -307,14 +307,11 @@ namespace Areserver
 
         private static void HandleCommand(string thisCmd)
         {
-            string cmdName;
-            string[] cmdArgs;
             string[] cmdArgsAll = thisCmd.Split(' ');
-            cmdArgs = new string[cmdArgsAll.Length - 1];
+            string[] cmdArgs = new string[cmdArgsAll.Length - 1];
             Array.Copy(cmdArgsAll, 1, cmdArgs, 0, cmdArgs.Length);
-            cmdName = cmdArgsAll[0];
 
-            if (!ExecCommand(cmdName, cmdArgs))
+            if (!ExecCommand(cmdArgsAll[0], cmdArgs))
             {
                 Out("unrecognized cmd");
             }
