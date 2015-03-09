@@ -51,31 +51,8 @@ namespace Areserver
         }
     }
 
-    class GroundTile : Tile
-    {
-    }
-
     [TileMetaAttribute(Id: 0)]
-    class GrassTile : GroundTile
-    {
-    }
-
-    [TileMetaAttribute(Id: 3)]
-    class PathTile : GroundTile
-    {
-    }
-
-    [TileMetaAttribute(Id: 2)]
-    class DoorTile : Tile
-    {
-    }
-
-    class WallTile : Tile
-    {
-    }
-
-    [TileMetaAttribute(Id: 1)]
-    class WoodWallTile : WallTile
+    class FloorTile : Tile
     {
     }
 }
