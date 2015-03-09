@@ -44,6 +44,7 @@
     <Compile Include="TileMetaAttribute.cs" />
     <Compile Include="Actor.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="Wall.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
