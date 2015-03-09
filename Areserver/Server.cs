@@ -137,21 +137,7 @@ namespace Areserver
                 server.SendMessage(outMsgOtherLife, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
             }
 
-            //send lots of builds
-            for (int y = 0; y < MapHeight; y++)
-            {
-                for (int x = 0; x < MapWidth; x++)
-                {
-                    Tile tileHere = dMap[x, y];
-                    NetOutgoingMessage outMsgBuildData = server.CreateMessage();
-                    outMsgBuildData.Write("BUILD");
-                    outMsgBuildData.Write(tileHere.OwnerUID);
-                    outMsgBuildData.Write(x);
-                    outMsgBuildData.Write(y);
-                    outMsgBuildData.Write(tileHere.TileID);
-                    server.SendMessage(outMsgBuildData, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
-                }
-            }
+            //TODO: send lots of TILE and WALL
         }
 
         private static void OnDisconnect(NetIncomingMessage msg)
@@ -181,9 +167,6 @@ namespace Areserver
                     break;
                 case "CHAT":
                     HandleCHAT(msg);
-                    break;
-                case "BUILD":
-                    HandleBUILD(msg);
                     break;
                 case "NAME":
                     HandleNAME(msg);
@@ -253,30 +236,6 @@ namespace Areserver
             outMsg.Write("CHAT");
             outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
             outMsg.Write(message);
-            server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
-        }
-
-        static void HandleBUILD(NetIncomingMessage msg)
-        {
-            int buildX = msg.ReadInt32();
-            int buildY = msg.ReadInt32();
-            int buildType = msg.ReadInt32();
-            Out(string.Format("BUILD: {0}: at ({1},{2}) {3}", msg.SenderConnection.RemoteUniqueIdentifier, buildX, buildY, buildType));
-            //save block in array
-            var newTile = Tile.ConstructFromID(buildType);
-            if (newTile == null)
-            {
-                Out("BAD TILE ID");
-                return;
-            }
-            dMap[buildX, buildY] = newTile;
-            //send the build to ALL clients
-            NetOutgoingMessage outMsg = server.CreateMessage();
-            outMsg.Write("BUILD");
-            outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
-            outMsg.Write(buildX);
-            outMsg.Write(buildY);
-            outMsg.Write(buildType);
             server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
         }
 
