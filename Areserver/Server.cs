@@ -171,6 +171,8 @@ namespace Areserver
                 case "NAME":
                     HandleNAME(msg);
                     break;
+                default:
+                    throw new Exception();
             }
         }
 
