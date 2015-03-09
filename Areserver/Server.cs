@@ -185,9 +185,6 @@ namespace Areserver
                 case "BUILD":
                     HandleBUILD(msg);
                     break;
-                case "FIRE":
-                    HandleFIRE(msg);
-                    break;
                 case "NAME":
                     HandleNAME(msg);
                     break;
@@ -280,26 +277,6 @@ namespace Areserver
             outMsg.Write(buildX);
             outMsg.Write(buildY);
             outMsg.Write(buildType);
-            server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
-        }
-
-        static void HandleFIRE(NetIncomingMessage msg)
-        {
-            float fireX = msg.ReadFloat();
-            float fireY = msg.ReadFloat();
-            float fireAngle = msg.ReadFloat();
-            float fireSpeed = msg.ReadFloat();
-            Out(string.Format("FIRE: {0}: at ({1},{2}) ang={3} speed={4}", msg.SenderConnection.RemoteUniqueIdentifier, fireX, fireY, fireAngle, fireSpeed));
-            //TODO: save?
-
-            //send the fire to ALL clients
-            NetOutgoingMessage outMsg = server.CreateMessage();
-            outMsg.Write("FIRE");
-            outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
-            outMsg.Write(fireX);
-            outMsg.Write(fireY);
-            outMsg.Write(fireAngle);
-            outMsg.Write(fireSpeed);
             server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
         }
 
