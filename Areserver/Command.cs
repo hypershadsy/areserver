@@ -31,7 +31,7 @@ namespace Areserver
 
             NetOutgoingMessage sayMsg = Server.server.CreateMessage();
             sayMsg.Write("CHAT");
-            sayMsg.Write((long)0);
+            sayMsg.Write(0L);
             sayMsg.Write(message);
             Server.server.SendToAll(sayMsg, NetDeliveryMethod.ReliableOrdered);
         }
@@ -53,7 +53,7 @@ namespace Areserver
                         //send message
                         NetOutgoingMessage buildMsg = Server.server.CreateMessage();
                         buildMsg.Write("BUILD");
-                        buildMsg.Write((long)0);
+                        buildMsg.Write(0L);
                         buildMsg.Write(x);
                         buildMsg.Write(y);
                         buildMsg.Write(0);
