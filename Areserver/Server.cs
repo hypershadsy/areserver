@@ -217,13 +217,13 @@ namespace Areserver
             plr.X = newX;
             plr.Y = newY;
 
-            //inform everyone about position change
+            //inform ALL clients about position change
             NetOutgoingMessage outMsg = server.CreateMessage();
             outMsg.Write("POS");
             outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
             outMsg.Write(newX);
             outMsg.Write(newY);
-            server.SendToAll(outMsg, msg.SenderConnection, NetDeliveryMethod.Unreliable, 0);
+            server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
         }
 
         static void HandleLIFE(NetIncomingMessage msg)
