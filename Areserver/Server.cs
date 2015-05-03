@@ -283,7 +283,8 @@ namespace Areserver
                     HandleNAME(msg);
                     break;
                 default:
-                    throw new Exception("Bad message type " + type);
+                    Out(string.Format("Bad message type {0} from player {1}",
+                        type, msg.SenderConnection.RemoteUniqueIdentifier));
             }
         }
 
