@@ -39,7 +39,7 @@ namespace Areserver
             GenerateMap();
         }
 
-        static void GenerateMap()
+        public static void GenerateMap()
         {
             dTiles = new Tile[MapWidth, MapHeight];
             dWallsLeft = new Wall[MapWidth, MapHeight];
@@ -54,7 +54,7 @@ namespace Areserver
             HardcodeWalls();
         }
 
-        static void HardcodeWalls()
+        private static void HardcodeWalls()
         {
             for (int y = 0; y < MapHeight; y++) //left side
             {
@@ -176,7 +176,7 @@ namespace Areserver
             SendMapSnapshot(msg.SenderConnection);
         }
 
-        static void SendMapSnapshot(NetConnection who)
+        public static void SendMapSnapshot(NetConnection who)
         {
             //lots of TILE
             for (int y = 0; y < MapHeight; y++)
