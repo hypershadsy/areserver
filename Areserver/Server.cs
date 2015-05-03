@@ -172,7 +172,7 @@ namespace Areserver
                     HandleNAME(msg);
                     break;
                 default:
-                    throw new Exception();
+                    throw new Exception("Bad message type " + type);
             }
         }
 
