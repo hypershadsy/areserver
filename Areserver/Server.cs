@@ -42,8 +42,8 @@ namespace Areserver
         public static void GenerateMap()
         {
             dTiles = new Tile[MapWidth, MapHeight];
-            dWallsLeft = new Wall[MapWidth, MapHeight];
-            dWallsTop = new Wall[MapWidth, MapHeight];
+            dWallsLeft = new Wall[MapWidth+1, MapHeight];
+            dWallsTop = new Wall[MapWidth, MapHeight+1];
             for (int y = 0; y < MapHeight; y++)
             {
                 for (int x = 0; x < MapWidth; x++)
@@ -56,21 +56,21 @@ namespace Areserver
 
         private static void HardcodeWalls()
         {
-            for (int y = 0; y < MapHeight; y++) //left side
+            for (int y = 0; y < 20; y++) //left side
             {
                 dWallsLeft[0, y] = new RedBrickWall(true);
             }
 
-            for (int y = 0; y < MapHeight; y++) //right side
+            for (int y = 0; y < 20; y++) //right side
             {
                 dWallsLeft[20, y] = new RedBrickWall(true);
             }
 
-            for (int x = 0; x < MapWidth; x++) //top side
+            for (int x = 0; x < 20; x++) //top side
             {
                 dWallsTop[x, 0] = new RedBrickWall(false);
             }
-            for (int x = 0; x < MapWidth; x++) //top side
+            for (int x = 0; x < 20; x++) //top side
             {
                 dWallsTop[x, 20] = new RedBrickWall(false);
             }
@@ -202,9 +202,9 @@ namespace Areserver
                 }
             }
             //lots of left WALL
-            for (int y = 0; y < MapHeight; y++)
+            for (int y = 0; y < dWallsLeft.GetLength(1); y++)
             {
-                for (int x = 0; x < MapWidth; x++)
+                for (int x = 0; x < dWallsLeft.GetLength(0); x++)
                 {
                     Wall leftHere = dWallsLeft[x, y];
                     if (leftHere == null)
@@ -225,9 +225,9 @@ namespace Areserver
                 }
             }
             //lots of top WALL
-            for (int y = 0; y < MapHeight; y++)
+            for (int y = 0; y < dWallsTop.GetLength(1); y++)
             {
-                for (int x = 0; x < MapWidth; x++)
+                for (int x = 0; x < dWallsTop.GetLength(0); x++)
                 {
                     Wall topHere = dWallsTop[x, y];
                     if (topHere == null)
