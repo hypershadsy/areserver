@@ -40,28 +40,11 @@ namespace Areserver
         [CommandAttribute("clearmap", "Clear the map")]
         public static void ClearMap(string[] args)
         {
-            //for every tile
-            for (int y = 0; y < Server.MapHeight; y++)
-            {
-                for (int x = 0; x < Server.MapWidth; x++)
-                {
-                    //if it's not grass tile
-                    if (Server.dMap[x, y].GetType() != typeof(WoodTile))
-                    {
-                        //set for myself
-                        Server.dMap[x, y] = Tile.ConstructFromID(0);
+            //reset map
+            Server.GenerateMap();
 
-                        //send message
-                        NetOutgoingMessage buildMsg = Server.server.CreateMessage();
-                        buildMsg.Write("BUILD");
-                        buildMsg.Write(0L);
-                        buildMsg.Write(x);
-                        buildMsg.Write(y);
-                        buildMsg.Write(0);
-                        Server.server.SendToAll(buildMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
-                    }
-                }
-            }
+            //send changes to everyone
+            Server.SendMapSnapshot(null);
         }
 
         [CommandAttribute("exit", "Close the server in a panic, no cleanup")]
