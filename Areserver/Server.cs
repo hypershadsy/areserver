@@ -173,7 +173,7 @@ namespace Areserver
                 server.SendMessage(outMsgOtherLife, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
             }
 
-            SendMapSnapshot(msg);
+            SendMapSnapshot(msg.SenderConnection);
         }
 
         static void SendMapSnapshot(NetConnection who)
