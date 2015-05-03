@@ -5,11 +5,6 @@ namespace Areserver
 {
     public class Tile
     {
-        /// <summary>
-        /// This tile's owner's ID. Zero if server.
-        /// </summary>
-        public long OwnerUID { get; set; }
-
         public int TileID
         {
             get
