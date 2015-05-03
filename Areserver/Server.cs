@@ -15,7 +15,9 @@ namespace Areserver
         public const int MapWidth = 20;
         public const int MapHeight = 20;
         public static List<Actor> dActors;
-        public static Tile[,] dMap;
+        public static Tile[,] dTiles;
+        public static Wall[,] dWallsLeft;
+        public static Wall[,] dWallsTop;
 
         public static void Main(string[] args)
         {
@@ -34,14 +36,49 @@ namespace Areserver
         private static void InitLocalData()
         {
             dActors = new List<Actor>();
-            dMap = new Tile[MapWidth, MapHeight];
+            dTiles = new Tile[MapWidth, MapHeight];
+            dWallsLeft = new Wall[MapWidth, MapHeight];
+            dWallsTop = new Wall[MapWidth, MapHeight];
+            GenerateMap();
+        }
+
+        static void GenerateMap()
+        {
             for (int y = 0; y < MapHeight; y++)
             {
                 for (int x = 0; x < MapWidth; x++)
                 {
-                    dMap[x, y] = new WoodTile();
+                    dTiles[x, y] = new WoodTile();
                 }
             }
+            HardcodeWalls();
+        }
+
+        static void HardcodeWalls()
+        {
+            for (int y = 0; y < MapHeight; y++) //left side
+            {
+                dWallsLeft[0, y] = new RedBrickWall(true);
+            }
+
+            for (int y = 0; y < MapHeight; y++) //right side
+            {
+                dWallsLeft[20, y] = new RedBrickWall(true);
+            }
+
+            for (int x = 0; x < MapWidth; x++) //top side
+            {
+                dWallsTop[x, 0] = new RedBrickWall(false);
+            }
+            for (int x = 0; x < MapWidth; x++) //top side
+            {
+                dWallsTop[x, 20] = new RedBrickWall(false);
+            }
+
+            //little square
+            dWallsTop[10, 10] = new RedBrickWall(false);
+            dWallsTop[10, 11] = new RedBrickWall(false);
+            dWallsLeft[10, 10] = new RedBrickWall(true);
         }
 
         private static void SetupServer()
