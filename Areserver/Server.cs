@@ -173,6 +173,11 @@ namespace Areserver
                 server.SendMessage(outMsgOtherLife, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
             }
 
+            SendMapSnapshot(msg);
+        }
+
+        static void SendMapSnapshot(NetConnection who)
+        {
             //lots of TILE
             for (int y = 0; y < MapHeight; y++)
             {
@@ -181,16 +186,14 @@ namespace Areserver
                     Tile tileHere = dTiles[x, y];
                     if (tileHere == null)
                         continue;
-
                     NetOutgoingMessage outMsgTile = server.CreateMessage();
                     outMsgTile.Write("TILE");
                     outMsgTile.Write(x);
                     outMsgTile.Write(y);
                     outMsgTile.Write(tileHere.TileID);
-                    server.SendMessage(outMsgTile, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
+                    server.SendMessage(outMsgTile, who, NetDeliveryMethod.ReliableOrdered);
                 }
             }
-
             //lots of left WALL
             for (int y = 0; y < MapHeight; y++)
             {
@@ -199,16 +202,14 @@ namespace Areserver
                     Wall leftHere = dWallsLeft[x, y];
                     if (leftHere == null)
                         continue;
-
                     NetOutgoingMessage outMsgWallLeft = server.CreateMessage();
                     outMsgWallLeft.Write(x);
                     outMsgWallLeft.Write(y);
                     outMsgWallLeft.Write(leftHere.WallID);
                     outMsgWallLeft.Write(true);
-                    server.SendMessage(outMsgWallLeft, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
+                    server.SendMessage(outMsgWallLeft, who, NetDeliveryMethod.ReliableOrdered);
                 }
             }
-
             //lots of top WALL
             for (int y = 0; y < MapHeight; y++)
             {
@@ -217,13 +218,12 @@ namespace Areserver
                     Wall topHere = dWallsTop[x, y];
                     if (topHere == null)
                         continue;
-
                     NetOutgoingMessage outMsgWallTop = server.CreateMessage();
                     outMsgWallTop.Write(x);
                     outMsgWallTop.Write(y);
                     outMsgWallTop.Write(topHere.WallID);
                     outMsgWallTop.Write(false);
-                    server.SendMessage(outMsgWallTop, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
+                    server.SendMessage(outMsgWallTop, who, NetDeliveryMethod.ReliableOrdered);
                 }
             }
         }
