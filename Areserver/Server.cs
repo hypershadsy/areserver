@@ -210,6 +210,7 @@ namespace Areserver
                     if (leftHere == null)
                         continue;
                     NetOutgoingMessage outMsgWallLeft = server.CreateMessage();
+                    outMsgWallLeft.Write("WALL");
                     outMsgWallLeft.Write(x);
                     outMsgWallLeft.Write(y);
                     outMsgWallLeft.Write(leftHere.WallID);
@@ -233,6 +234,7 @@ namespace Areserver
                     if (topHere == null)
                         continue;
                     NetOutgoingMessage outMsgWallTop = server.CreateMessage();
+                    outMsgWallTop.Write("WALL");
                     outMsgWallTop.Write(x);
                     outMsgWallTop.Write(y);
                     outMsgWallTop.Write(topHere.WallID);
