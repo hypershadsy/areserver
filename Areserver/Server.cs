@@ -191,7 +191,14 @@ namespace Areserver
                     outMsgTile.Write(x);
                     outMsgTile.Write(y);
                     outMsgTile.Write(tileHere.TileID);
-                    server.SendMessage(outMsgTile, who, NetDeliveryMethod.ReliableOrdered);
+                    if (who == null)
+                    {
+                        server.SendToAll(outMsgTile, NetDeliveryMethod.ReliableOrdered);
+                    }
+                    else
+                    {
+                        server.SendMessage(outMsgTile, who, NetDeliveryMethod.ReliableOrdered);
+                    }
                 }
             }
             //lots of left WALL
@@ -207,7 +214,14 @@ namespace Areserver
                     outMsgWallLeft.Write(y);
                     outMsgWallLeft.Write(leftHere.WallID);
                     outMsgWallLeft.Write(true);
-                    server.SendMessage(outMsgWallLeft, who, NetDeliveryMethod.ReliableOrdered);
+                    if (who == null)
+                    {
+                        server.SendToAll(outMsgWallLeft, NetDeliveryMethod.ReliableOrdered);
+                    }
+                    else
+                    {
+                        server.SendMessage(outMsgWallLeft, who, NetDeliveryMethod.ReliableOrdered);
+                    }
                 }
             }
             //lots of top WALL
@@ -223,7 +237,14 @@ namespace Areserver
                     outMsgWallTop.Write(y);
                     outMsgWallTop.Write(topHere.WallID);
                     outMsgWallTop.Write(false);
-                    server.SendMessage(outMsgWallTop, who, NetDeliveryMethod.ReliableOrdered);
+                    if (who == null)
+                    {
+                        server.SendToAll(outMsgWallTop, NetDeliveryMethod.ReliableOrdered);
+                    }
+                    else
+                    {
+                        server.SendMessage(outMsgWallTop, who, NetDeliveryMethod.ReliableOrdered);
+                    }
                 }
             }
         }
