@@ -285,6 +285,7 @@ namespace Areserver
                 default:
                     Out(string.Format("Bad message type {0} from player {1}",
                         type, msg.SenderConnection.RemoteUniqueIdentifier));
+                    break;
             }
         }
 
