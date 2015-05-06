@@ -61,4 +61,21 @@ namespace Areserver
         {
         }
     }
+
+    class Door : Wall
+    {
+        public Door(bool leftFacing)
+            : base(leftFacing)
+        {
+        }
+    }
+
+    [WallMetaAttribute(1)]
+    class WoodDoor : Door
+    {
+        public WoodDoor(bool leftFacing)
+            : base(leftFacing)
+        {
+        }
+    }
 }

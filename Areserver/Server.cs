@@ -79,6 +79,9 @@ namespace Areserver
             dWallsTop[10, 10] = new RedBrickWall(false);
             dWallsTop[10, 11] = new RedBrickWall(false);
             dWallsLeft[10, 10] = new RedBrickWall(true);
+
+            //door
+            dWallsLeft[0, 1] = new WoodDoor(true);
         }
 
         private static void SetupServer()
