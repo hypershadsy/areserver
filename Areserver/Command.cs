@@ -72,6 +72,17 @@ namespace Areserver
             }
         }
 
+        [CommandAttribute("testgoc", "Place a basic brown table on the map.")]
+        public static void TestGOC(string[] args)
+        {
+            NetOutgoingMessage table = Server.server.CreateMessage();
+            table.Write("OBJ_CREATE");
+            table.Write(0); //table
+            table.Write(4); //x
+            table.Write(1); //y
+            Server.server.SendToAll(table, NetDeliveryMethod.ReliableOrdered);
+        }
+
         [CommandAttribute("help", "List all commands")]
         public static void Help(string[] args)
         {
