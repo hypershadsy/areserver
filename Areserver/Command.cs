@@ -77,9 +77,11 @@ namespace Areserver
         {
             NetOutgoingMessage table = Server.server.CreateMessage();
             table.Write("OBJ_CREATE");
+            table.Write(8347337); //uid
             table.Write(0); //table
             table.Write(4); //x
             table.Write(1); //y
+            table.Write(false);
             Server.server.SendToAll(table, NetDeliveryMethod.ReliableOrdered);
         }
 
