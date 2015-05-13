@@ -44,7 +44,9 @@ namespace Areserver
             Server.GenerateMap();
 
             //send changes to everyone
-            Server.SendMapSnapshot(null);
+            NetOutgoingMessage mapState = Server.server.CreateMessage();
+            Server.AppendMapSnapshot(mapState);
+            Server.server.SendToAll(mapState, NetDeliveryMethod.ReliableOrdered);
         }
 
         [CommandAttribute("exit", "Close the server in a panic, no cleanup")]

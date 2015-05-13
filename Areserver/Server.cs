@@ -155,31 +155,33 @@ namespace Areserver
 
         private static void InformNewbieState(NetIncomingMessage msg)
         {
+            NetOutgoingMessage newbieState = server.CreateMessage();
+
+            newbieState.Write("MULTION");
+
             foreach (var actor in dActors) //not using server.Connections
             {
                 Player plr = (Player)actor;
-                NetOutgoingMessage outMsgPlayerList = server.CreateMessage();
-                outMsgPlayerList.Write("JOIN");
-                outMsgPlayerList.Write(plr.UID);
-                server.SendMessage(outMsgPlayerList, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
+                newbieState.Write("JOIN");
+                newbieState.Write(plr.UID);
 
-                NetOutgoingMessage outMsgOtherName = server.CreateMessage();
-                outMsgOtherName.Write("NAME");
-                outMsgOtherName.Write(plr.UID); //long uid
-                outMsgOtherName.Write(plr.Name); //string name
-                server.SendMessage(outMsgOtherName, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
+                newbieState.Write("NAME");
+                newbieState.Write(plr.UID); //long uid
+                newbieState.Write(plr.Name); //string name
 
-                NetOutgoingMessage outMsgOtherLife = server.CreateMessage();
-                outMsgOtherLife.Write("LIFE");
-                outMsgOtherLife.Write(plr.UID);
-                outMsgOtherLife.Write(plr.Life);
-                server.SendMessage(outMsgOtherLife, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
+                newbieState.Write("LIFE");
+                newbieState.Write(plr.UID);
+                newbieState.Write(plr.Life);
             }
 
-            SendMapSnapshot(msg.SenderConnection);
+            AppendMapSnapshot(newbieState);
+
+            newbieState.Write("MULTIOFF");
+
+            server.SendMessage(newbieState, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
         }
 
-        public static void SendMapSnapshot(NetConnection who)
+        public static void AppendMapSnapshot(NetOutgoingMessage outgoing)
         {
             //lots of TILE
             for (int y = 0; y < MapHeight; y++)
@@ -189,19 +191,10 @@ namespace Areserver
                     Tile tileHere = dTiles[x, y];
                     if (tileHere == null)
                         continue;
-                    NetOutgoingMessage outMsgTile = server.CreateMessage();
-                    outMsgTile.Write("TILE");
-                    outMsgTile.Write(x);
-                    outMsgTile.Write(y);
-                    outMsgTile.Write(tileHere.TileID);
-                    if (who == null)
-                    {
-                        server.SendToAll(outMsgTile, NetDeliveryMethod.ReliableOrdered);
-                    }
-                    else
-                    {
-                        server.SendMessage(outMsgTile, who, NetDeliveryMethod.ReliableOrdered);
-                    }
+                    outgoing.Write("TILE");
+                    outgoing.Write(x);
+                    outgoing.Write(y);
+                    outgoing.Write(tileHere.TileID);
                 }
             }
             //lots of left WALL
@@ -212,20 +205,11 @@ namespace Areserver
                     Wall leftHere = dWallsLeft[x, y];
                     if (leftHere == null)
                         continue;
-                    NetOutgoingMessage outMsgWallLeft = server.CreateMessage();
-                    outMsgWallLeft.Write("WALL");
-                    outMsgWallLeft.Write(x);
-                    outMsgWallLeft.Write(y);
-                    outMsgWallLeft.Write(leftHere.WallID);
-                    outMsgWallLeft.Write(true);
-                    if (who == null)
-                    {
-                        server.SendToAll(outMsgWallLeft, NetDeliveryMethod.ReliableOrdered);
-                    }
-                    else
-                    {
-                        server.SendMessage(outMsgWallLeft, who, NetDeliveryMethod.ReliableOrdered);
-                    }
+                    outgoing.Write("WALL");
+                    outgoing.Write(x);
+                    outgoing.Write(y);
+                    outgoing.Write(leftHere.WallID);
+                    outgoing.Write(true);
                 }
             }
             //lots of top WALL
@@ -236,20 +220,11 @@ namespace Areserver
                     Wall topHere = dWallsTop[x, y];
                     if (topHere == null)
                         continue;
-                    NetOutgoingMessage outMsgWallTop = server.CreateMessage();
-                    outMsgWallTop.Write("WALL");
-                    outMsgWallTop.Write(x);
-                    outMsgWallTop.Write(y);
-                    outMsgWallTop.Write(topHere.WallID);
-                    outMsgWallTop.Write(false);
-                    if (who == null)
-                    {
-                        server.SendToAll(outMsgWallTop, NetDeliveryMethod.ReliableOrdered);
-                    }
-                    else
-                    {
-                        server.SendMessage(outMsgWallTop, who, NetDeliveryMethod.ReliableOrdered);
-                    }
+                    outgoing.Write("WALL");
+                    outgoing.Write(x);
+                    outgoing.Write(y);
+                    outgoing.Write(topHere.WallID);
+                    outgoing.Write(false);
                 }
             }
         }
