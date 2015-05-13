@@ -157,7 +157,7 @@ namespace Areserver
         {
             NetOutgoingMessage newbieState = server.CreateMessage();
 
-            newbieState.Write("MULTION");
+            newbieState.Write("MULTI_ON");
 
             foreach (var actor in dActors) //not using server.Connections
             {
@@ -176,7 +176,7 @@ namespace Areserver
 
             AppendMapSnapshot(newbieState);
 
-            newbieState.Write("MULTIOFF");
+            newbieState.Write("MULTI_OFF");
 
             server.SendMessage(newbieState, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
         }
