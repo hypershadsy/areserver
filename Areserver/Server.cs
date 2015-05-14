@@ -15,6 +15,7 @@ namespace Areserver
         public const int MapWidth = 20;
         public const int MapHeight = 20;
         public static List<Actor> dActors;
+        public static List<GameObject> dGameObjects;
         public static Tile[,] dTiles;
         public static Wall[,] dWallsLeft;
         public static Wall[,] dWallsTop;
