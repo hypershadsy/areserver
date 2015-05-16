@@ -1,5 +1,6 @@
 Areserver/bin/
 Areserver/obj/
 pushserver.sh
+.vs/
 *.swp
 *.userprefs
