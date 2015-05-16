@@ -14,11 +14,12 @@ namespace Areserver
 
         public const int MapWidth = 20;
         public const int MapHeight = 20;
+        public const int MapDepth = 3;
         public static List<Actor> dActors;
         public static List<GameObject> dGameObjects;
-        public static Tile[,] dTiles;
-        public static Wall[,] dWallsLeft;
-        public static Wall[,] dWallsTop;
+        public static Tile[,,] dTiles;
+        public static Wall[,,] dWallsLeft;
+        public static Wall[,,] dWallsTop;
 
         public static void Main(string[] args)
         {
@@ -42,14 +43,14 @@ namespace Areserver
 
         public static void GenerateMap()
         {
-            dTiles = new Tile[MapWidth, MapHeight];
-            dWallsLeft = new Wall[MapWidth+1, MapHeight];
-            dWallsTop = new Wall[MapWidth, MapHeight+1];
+            dTiles = new Tile[MapWidth, MapHeight, MapDepth];
+            dWallsLeft = new Wall[MapWidth+1, MapHeight, MapDepth];
+            dWallsTop = new Wall[MapWidth, MapHeight+1, MapDepth];
             for (int y = 0; y < MapHeight; y++)
             {
                 for (int x = 0; x < MapWidth; x++)
                 {
-                    dTiles[x, y] = new WoodTile();
+                    dTiles[x, y, MapDepth] = new WoodTile();
                 }
             }
             HardcodeWalls();
@@ -57,32 +58,39 @@ namespace Areserver
 
         private static void HardcodeWalls()
         {
-            for (int y = 0; y < 20; y++) //left side
+            for (int z = 0; z < MapDepth; z++)
             {
-                dWallsLeft[0, y] = new RedBrickWall(true);
-            }
+                for (int y = 0; y < 20; y++) //left side
+                {
+                    dWallsLeft[0, y, z] = new RedBrickWall(true);
+                }
 
-            for (int y = 0; y < 20; y++) //right side
-            {
-                dWallsLeft[20, y] = new RedBrickWall(true);
-            }
+                for (int y = 0; y < 20; y++) //right side
+                {
+                    dWallsLeft[20, y, z] = new RedBrickWall(true);
+                }
 
-            for (int x = 0; x < 20; x++) //top side
-            {
-                dWallsTop[x, 0] = new RedBrickWall(false);
-            }
-            for (int x = 0; x < 20; x++) //top side
-            {
-                dWallsTop[x, 20] = new RedBrickWall(false);
+                for (int x = 0; x < 20; x++) //top side
+                {
+                    dWallsTop[x, 0, z] = new RedBrickWall(false);
+                }
+                for (int x = 0; x < 20; x++) //top side
+                {
+                    dWallsTop[x, 20, z] = new RedBrickWall(false);
+                }
             }
 
             //little square
-            dWallsTop[10, 10] = new RedBrickWall(false);
-            dWallsTop[10, 11] = new RedBrickWall(false);
-            dWallsLeft[10, 10] = new RedBrickWall(true);
+            dWallsTop[10, 10, 0] = new RedBrickWall(false);
+            dWallsTop[10, 11, 0] = new RedBrickWall(false);
+            dWallsLeft[10, 10, 0] = new RedBrickWall(true);
+
+            dWallsTop[10-5, 10-5, 2] = new RedBrickWall(false);
+            dWallsTop[10-5, 11-5, 2] = new RedBrickWall(false);
+            dWallsLeft[10-5, 10-5, 2] = new RedBrickWall(true);
 
             //door
-            dWallsLeft[0, 1] = new WoodDoor(true);
+            dWallsLeft[0, 1, 0] = new WoodDoor(true);
         }
 
         private static void SetupServer()
@@ -185,47 +193,59 @@ namespace Areserver
         public static void AppendMapSnapshot(NetOutgoingMessage outgoing)
         {
             //lots of TILE
-            for (int y = 0; y < MapHeight; y++)
+            for (int z = 0; z < MapDepth; z++)
             {
-                for (int x = 0; x < MapWidth; x++)
+                for (int y = 0; y < MapHeight; y++)
                 {
-                    Tile tileHere = dTiles[x, y];
-                    if (tileHere == null)
-                        continue;
-                    outgoing.Write("TILE");
-                    outgoing.Write(x);
-                    outgoing.Write(y);
-                    outgoing.Write(tileHere.TileID);
+                    for (int x = 0; x < MapWidth; x++)
+                    {
+                        Tile tileHere = dTiles[x, y, z];
+                        if (tileHere == null)
+                            continue;
+                        outgoing.Write("TILE");
+                        outgoing.Write(x);
+                        outgoing.Write(y);
+                        outgoing.Write(z);
+                        outgoing.Write(tileHere.TileID);
+                    }
                 }
             }
             //lots of left WALL
-            for (int y = 0; y < dWallsLeft.GetLength(1); y++)
+            for (int z = 0; z < MapDepth; z++)
             {
-                for (int x = 0; x < dWallsLeft.GetLength(0); x++)
+                for (int y = 0; y < dWallsLeft.GetLength(1); y++)
                 {
-                    Wall leftHere = dWallsLeft[x, y];
-                    if (leftHere == null)
-                        continue;
-                    outgoing.Write("WALL");
-                    outgoing.Write(x);
-                    outgoing.Write(y);
-                    outgoing.Write(leftHere.WallID);
-                    outgoing.Write(true);
+                    for (int x = 0; x < dWallsLeft.GetLength(0); x++)
+                    {
+                        Wall leftHere = dWallsLeft[x, y, z];
+                        if (leftHere == null)
+                            continue;
+                        outgoing.Write("WALL");
+                        outgoing.Write(x);
+                        outgoing.Write(y);
+                        outgoing.Write(z);
+                        outgoing.Write(leftHere.WallID);
+                        outgoing.Write(true);
+                    }
                 }
             }
             //lots of top WALL
-            for (int y = 0; y < dWallsTop.GetLength(1); y++)
+            for (int z = 0; z < MapDepth; z++)
             {
-                for (int x = 0; x < dWallsTop.GetLength(0); x++)
+                for (int y = 0; y < dWallsTop.GetLength(1); y++)
                 {
-                    Wall topHere = dWallsTop[x, y];
-                    if (topHere == null)
-                        continue;
-                    outgoing.Write("WALL");
-                    outgoing.Write(x);
-                    outgoing.Write(y);
-                    outgoing.Write(topHere.WallID);
-                    outgoing.Write(false);
+                    for (int x = 0; x < dWallsTop.GetLength(0); x++)
+                    {
+                        Wall topHere = dWallsTop[x, y, z];
+                        if (topHere == null)
+                            continue;
+                        outgoing.Write("WALL");
+                        outgoing.Write(x);
+                        outgoing.Write(y);
+                        outgoing.Write(z);
+                        outgoing.Write(topHere.WallID);
+                        outgoing.Write(false);
+                    }
                 }
             }
         }
@@ -288,11 +308,13 @@ namespace Areserver
         {
             int newX = msg.ReadInt32();
             int newY = msg.ReadInt32();
+            int newZ = msg.ReadInt32();
 
             //save position
             Player plr = GetPlayerFromUID(msg.SenderConnection.RemoteUniqueIdentifier);
             plr.X = newX;
             plr.Y = newY;
+            plr.Z = newZ;
 
             //inform ALL clients about position change
             NetOutgoingMessage outMsg = server.CreateMessage();
@@ -300,6 +322,7 @@ namespace Areserver
             outMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
             outMsg.Write(newX);
             outMsg.Write(newY);
+            outMsg.Write(newZ);
             server.SendToAll(outMsg, null, NetDeliveryMethod.ReliableOrdered, 0);
         }
 

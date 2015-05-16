@@ -81,6 +81,7 @@ namespace Areserver
             table.Write(0); //table
             table.Write(4); //x
             table.Write(1); //y
+            table.Write(1); //z
             table.Write(false);
             Server.server.SendToAll(table, NetDeliveryMethod.ReliableOrdered);
         }

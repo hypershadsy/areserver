@@ -9,6 +9,8 @@ namespace Areserver
 
         public int Y { get; set; }
 
+        public int Z { get; set; }
+
         public string Name { get; set; }
 
         public int Life { get; set; }
@@ -17,6 +19,7 @@ namespace Areserver
         {
             X = int.MinValue;
             Y = int.MinValue;
+            Z = int.MinValue;
             Name = "Cactus Fantastico";
             Life = 100;
         }
