@@ -44,13 +44,16 @@ namespace Areserver
         public static void GenerateMap()
         {
             dTiles = new Tile[MapWidth, MapHeight, MapDepth];
-            dWallsLeft = new Wall[MapWidth+1, MapHeight, MapDepth];
-            dWallsTop = new Wall[MapWidth, MapHeight+1, MapDepth];
-            for (int y = 0; y < MapHeight; y++)
+            dWallsLeft = new Wall[MapWidth + 1, MapHeight, MapDepth];
+            dWallsTop = new Wall[MapWidth, MapHeight + 1, MapDepth];
+            for (int z = 0; z < MapDepth; z++)
             {
-                for (int x = 0; x < MapWidth; x++)
+                for (int y = 0; y < MapHeight; y++)
                 {
-                    dTiles[x, y, MapDepth] = new WoodTile();
+                    for (int x = 0; x < MapWidth; x++)
+                    {
+                        dTiles[x, y, z] = new WoodTile();
+                    }
                 }
             }
             HardcodeWalls();
